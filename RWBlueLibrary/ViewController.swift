@@ -32,6 +32,10 @@ import UIKit
 
 final class ViewController: UIViewController {
 
+  private enum Constants {
+    static let CellIdentifier = "Cell"
+  }
+  
   @IBOutlet var tableView: UITableView!
   @IBOutlet var undoBarButtonItem: UIBarButtonItem!
   @IBOutlet var trashBarButtonItem: UIBarButtonItem!
@@ -76,7 +80,7 @@ extension ViewController: UITableViewDataSource {
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+    let cell = tableView.dequeueReusableCell(withIdentifier: Constants.CellIdentifier, for: indexPath)
     if let albumData = currentAlbumData {
       let row = indexPath.row
       cell.textLabel!.text = albumData[row].title
