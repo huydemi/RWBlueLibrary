@@ -31,11 +31,12 @@
 import UIKit
 
 final class ViewController: UIViewController {
-
+  
   private enum Constants {
     static let CellIdentifier = "Cell"
   }
   
+  @IBOutlet weak var horizontalScrollerView: HorizontalScrollerView!
   @IBOutlet var tableView: UITableView!
   @IBOutlet var undoBarButtonItem: UIBarButtonItem!
   @IBOutlet var trashBarButtonItem: UIBarButtonItem!
@@ -51,6 +52,10 @@ final class ViewController: UIViewController {
     
     tableView.dataSource = self
 
+    horizontalScrollerView.dataSource = self
+    horizontalScrollerView.delegate = self
+    horizontalScrollerView.reload()
+    
     showDataForAlbum(at: currentAlbumIndex)
   }
   
@@ -87,5 +92,37 @@ extension ViewController: UITableViewDataSource {
       cell.detailTextLabel!.text = albumData[row].value
     }
     return cell
+  }
+}
+
+extension ViewController: HorizontalScrollerViewDelegate {
+  func horizontalScrollerView(_ horizontalScrollerView: HorizontalScrollerView, didSelectViewAt index: Int) {
+    
+    let previousAlbumView = horizontalScrollerView.view(at: currentAlbumIndex) as! AlbumView
+    previousAlbumView.highlightAlbum(false)
+    
+    currentAlbumIndex = index
+    
+    let albumView = horizontalScrollerView.view(at: currentAlbumIndex) as! AlbumView
+    albumView.highlightAlbum(true)
+    
+    showDataForAlbum(at: index)
+  }
+}
+
+extension ViewController: HorizontalScrollerViewDataSource {
+  func numberOfViews(in horizontalScrollerView: HorizontalScrollerView) -> Int {
+    return allAlbums.count
+  }
+  
+  func horizontalScrollerView(_ horizontalScrollerView: HorizontalScrollerView, viewAt index: Int) -> UIView {
+    let album = allAlbums[index]
+    let albumView = AlbumView(frame: CGRect(x: 0, y: 0, width: 100, height: 100), coverUrl: album.coverUrl)
+    if currentAlbumIndex == index {
+      albumView.highlightAlbum(true)
+    } else {
+      albumView.highlightAlbum(false)
+    }
+    return albumView
   }
 }
